@@ -6,63 +6,62 @@ import React from "react";
 export default function page({ params }) {
 	const param = useSearchParams();
 
-	console.log(param.get("Fare"));
 
-	// Aritra this image not responsive for mobile devices please check and improve this for mobile devices
-	
 
 	return (
-		<div className="flex justify-center">
-			<div class="w-3/4 p-4  bg-white border border-gray-200 rounded-lg shadow sm:p-6 dark:bg-gray-800 dark:border-gray-700 my-20 mx-20">
-				<div className="flex justify-center">
+		<div className="flex justify-center ">
+			<div class="w-3/4 p-4 blue bg-white border border-gray-200 rounded-lg shadow sm:p-6 my-20 mx-20">
+				<div className="flex justify-center my-5">
 					<h2 class="text-center text-gray-200 whitespace-pre-line mb-4 text-4xl">
-						Shuttle No {params.card}
+						Here is Your Trip details
 					</h2>
 				</div>
-				<h2 class="text-lg text-gray-200 font-medium mt-4 ml-5">
-					Here is Your Trip details
-				</h2>
-				<div className="relative"><img className="absolute right-0 w-52 h-auto" src="http://localhost:3000/cab.jpg" loading="lazy" alt="Description of Image" /></div>
-				<div class="space-y-2">
-					<div div class="flex items-center ml-6">
-						<div class="w-2 h-2 bg-white rounded-se-sm mr-2"></div>
-						<span className="m-3 text-gray-200">25.31 kilometers</span>
-						<div class="w-2 h-2 bg-white rounded-se-sm mr-2"></div>
-						<span className="m-3 text-gray-200 ">1 h 28 min</span>
-					</div>
 
-					<div class="flex items-center ml-3">
-					<span className="m-2 text-gray-200 ">FARE : -</span>
-						<span className="text-gray-200">₹{param.get("fare")}</span>
-					</div>
-				</div>
-				<h2 class="text-xl font-medium mb-3 ml-5 pt-2 text-gray-200 mt-4">Route</h2>
-				<div class="space-y-4">
-					<div class="flex justify-between items-start">
-						<div class="flex items-center">
-							<div class="w-4 h-4 bg-primary rounded-full mr-1"></div>
-							<span className="text-gray-200">
-								{param.get("start")} Ride Start At :{" "}
-							</span>
-							<span className="m-3 text-gray-200">
-								{" "}
-								{param.get("startTime")}
-							</span>
+				<div className="flex flex-row justify-around">
+					<div className="items-center space-y-10">
+						<div class="space-y-2">
+							<div div class="flex items-center space-x-20">
+								<div className="items-center flex flex-row">
+									<div class="w-2 h-2 bg-white rounded-se-sm mr-2 my-3"></div>
+									<span className=" text-gray-200">25.31 kilometers</span>
+								</div>
+								<div className="flex flex-row items-center">
+									<div class="w-2 h-2 bg-white rounded-se-sm mr-2"></div>
+									<span className="m-3 text-gray-200 ">1 h 28 min</span>
+								</div>
+							</div>
+						</div>
+
+						<div class="space-y-4">
+							<div div class="flex items-center space-x-20">
+								<div className="items-center flex flex-row">
+									<div class="w-2 h-2 bg-white rounded-se-sm mr-2 my-3"></div>
+									<span className=" text-gray-200">
+										Pickup at {param.get("pickup")} @ {param.get("PickupTime")}
+									</span>
+								</div>
+								<div className="flex flex-row items-center">
+									<div class="w-2 h-2 bg-white rounded-se-sm mr-2"></div>
+									<span className="m-3 text-gray-200 ">
+										Drop at {param.get("drop")} @ {param.get("DropTime")}
+									</span>
+								</div>
+							</div>
+						</div>
+						<div className="flex justify-center my-3 text-white">
+							<h2>Fare:- {param.get("Fare")} Rs/- </h2>
 						</div>
 					</div>
-					<div class="flex justify-between items-start ">
-						<div class="flex items-center">
-							<div class="w-4 h-4 bg-primary rounded-full mr-1"></div>
-							<span className="text-gray-200">
-								{param.get("dest")} Ride end At:
-							</span>
-							<span className="m-3 text-gray-200">
-								{" "}
-								{param.get("destTime")}
-							</span>
-						</div>
+					<div className="">
+						<img
+							className=" right-0 w-52 h-auto"
+							src="http://localhost:3000/cab.jpg"
+							loading="lazy"
+							alt="Description of Image"
+						/>
 					</div>
 				</div>
+
 				<div className="flex justify-center mt-10">
 					<button
 						type="button"

@@ -32,7 +32,13 @@ export default function page() {
 
 	const router = useRouter();
 
-	function book(data) {
+	function book(det) {
+		const data = {
+			...det,
+			pickup: param.get("start"),
+			drop: param.get("dest"),
+		};
+
 		const params = new URLSearchParams(data).toString();
 		router.push(`/Services/Shuttle/${data.Shuttle_id}?${params}`);
 	}

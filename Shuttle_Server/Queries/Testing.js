@@ -41,96 +41,107 @@ function calculateDistance(lat1, long1, lat2, long2) {
 }
 
 async function main() {
-	const Start = "New Town";
-	const Dest = "Hastings";
-	const CurrentTime = "3:30 PM";
+	const args = {
+		Start: "Danes Sheikh Lane",
+		Dest: "New Town",
+		CurrentTime: "3:30 PM",
+	};
 
-	// Fetch start and destination stoppage IDs and coordinates
-	const [startData] = await prisma.$queryRaw`
-    SELECT 
-        "s1"."Stopage_id" AS "StartStopageId", "s1"."Lat" AS "StartLat", "s1"."Long" AS "StartLong",
-        "s2"."Stopage_id" AS "DestStopageId", "s2"."Lat" AS "DestLat", "s2"."Long" AS "DestLong"
-    FROM "Stoppage" "s1"
-    JOIN "Stoppage" "s2" ON "s2"."Name" = ${Dest}
-    WHERE "s1"."Name" = ${Start}
+	// Step 1: Fetch the Stopage IDs for Start and Dest in one query
+	const [startStopage, destStopage] = await prisma.$queryRaw`
+SELECT "Stopage_id", "Name" 
+FROM "Stoppage" 
+WHERE "Name" IN (${args.Start}, ${args.Dest})
 `;
 
-	if (!startData) {
-		throw new Error("Start or Destination Stoppage not found");
-	}
+	const stopageid1 = startStopage.Stopage_id;
+	const stopageid2 = destStopage.Stopage_id;
 
-	const {
-		StartStopageId,
-		StartLat,
-		StartLong,
-		DestStopageId,
-		DestLat,
-		DestLong,
-	} = startData;
-
-	// Fetch all shuttles passing through the start and destination stoppages
-	const shuttles = await prisma.$queryRaw`
-    SELECT 
-        "m1"."Shuttle_id",
-        "sh"."Starting", "sh"."Destination", "sh"."Start_time",
-        "m1"."Time" AS "PickupTime", "m2"."Time" AS "DropTime"
-    FROM "Map" "m1"
-    JOIN "Map" "m2" ON "m1"."Shuttle_id" = "m2"."Shuttle_id"
-    JOIN "Shuttle" "sh" ON "m1"."Shuttle_id" = "sh"."Shuttle_id"
-    WHERE "m1"."Stopage_id" = ${StartStopageId} AND "m2"."Stopage_id" = ${DestStopageId}
+	// Step 2: Find all shuttles that pass through both Start and Dest
+	const shuttleIds = await prisma.$queryRaw`
+SELECT DISTINCT "Shuttle_id" 
+FROM "Map"
+WHERE "Stopage_id" IN (${stopageid1}, ${stopageid2})
+GROUP BY "Shuttle_id"
+HAVING COUNT(DISTINCT "Stopage_id") = 2
 `;
 
-	if (!shuttles.length) {
-		throw new Error(
-			"No shuttles found for the given start and destination stoppages"
-		);
-	}
+	// Step 3: Fetch coordinates for Start once
+	const startCoor = await prisma.$queryRaw`
+SELECT "Lat", "Long" 
+FROM "Stoppage" 
+WHERE "Stopage_id" = ${stopageid1}
+`;
 
-	// Calculate current time in minutes
-	const currentTimeInMinutes = timeToMinutes(CurrentTime);
+	// Step 4: Fetch shuttle details and distances in one go
+	const finalData = await Promise.all(
+		shuttleIds.map(async ({ Shuttle_id }) => {
+			const [shuttle, startStop, destStop, mapData] = await prisma.$transaction(
+				[
+					prisma.$queryRaw`
+			  SELECT "Starting", "Destination" 
+			  FROM "Shuttle" 
+			  WHERE "Shuttle_id" = ${Shuttle_id}`,
+					prisma.$queryRaw`
+			  SELECT "Lat", "Long" 
+			  FROM "Stoppage" 
+			  WHERE "Name" = (SELECT "Starting" FROM "Shuttle" WHERE "Shuttle_id" = ${Shuttle_id})`,
+					prisma.$queryRaw`
+			  SELECT "Lat", "Long" 
+			  FROM "Stoppage" 
+			  WHERE "Name" = (SELECT "Destination" FROM "Shuttle" WHERE "Shuttle_id" = ${Shuttle_id})`,
+					prisma.$queryRaw`
+			  SELECT "Stopage_id", "Time" 
+			  FROM "Map" 
+			  WHERE "Shuttle_id" = ${Shuttle_id} AND "Stopage_id" IN (${stopageid1}, ${stopageid2})`,
+				]
+			);
 
-	let finalData = [];
+			// Ensure mapData contains the required stopages
+			const stopage1Data = mapData.find((m) => m.Stopage_id === stopageid1);
+			const stopage2Data = mapData.find((m) => m.Stopage_id === stopageid2);
 
-	for (let shuttle of shuttles) {
-		// Fetch coordinates for shuttle starting and destination points
-		const [itemStartCoor, itemDestCoor] = await prisma.$queryRaw`
-        SELECT 
-            (SELECT "Lat" FROM "Stoppage" WHERE "Name" = ${shuttle.Starting}) AS "ItemStartLat",
-            (SELECT "Long" FROM "Stoppage" WHERE "Name" = ${shuttle.Starting}) AS "ItemStartLong",
-            (SELECT "Lat" FROM "Stoppage" WHERE "Name" = ${shuttle.Destination}) AS "ItemDestLat",
-            (SELECT "Long" FROM "Stoppage" WHERE "Name" = ${shuttle.Destination}) AS "ItemDestLong"
-    `;
-
-		if (!itemStartCoor || !itemDestCoor) {
-			console.warn(`Coordinates not found for shuttle ${shuttle.Shuttle_id}`);
-			continue;
-		}
-
-		const distFromStart = calculateDistance(
-			StartLat,
-			StartLong,
-			itemStartCoor.ItemStartLat,
-			itemStartCoor.ItemStartLong
-		);
-		const distFromDest = calculateDistance(
-			StartLat,
-			StartLong,
-			itemDestCoor.ItemDestLat,
-			itemDestCoor.ItemDestLong
-		);
-
-		// Filter based on distance and time conditions
-		if (distFromStart < distFromDest) {
-			const startingTimeInMinutes = timeToMinutes(shuttle.Start_time);
-			if (startingTimeInMinutes >= currentTimeInMinutes) {
-				shuttle.PickupTime = shuttle.PickupTime;
-				shuttle.DropTime = shuttle.DropTime;
-				finalData.push(shuttle);
+			if (!stopage1Data || !stopage2Data) {
+				// Skip this shuttle if any of the required stopage data is missing
+				return null;
 			}
-		}
-	}
 
-	console.log(finalData);
+			const distFromStart = calculateDistance(
+				startCoor[0].Lat,
+				startCoor[0].Long,
+				startStop[0].Lat,
+				startStop[0].Long
+			);
+			const distFromDest = calculateDistance(
+				startCoor[0].Lat,
+				startCoor[0].Long,
+				destStop[0].Lat,
+				destStop[0].Long
+			);
+
+			if (distFromStart < distFromDest) {
+				const startingTimeInMinutes = timeToMinutes(stopage1Data.Time);
+				const currentTimeInMinutes = timeToMinutes(args.Time);
+
+				if (startingTimeInMinutes >= currentTimeInMinutes) {
+					const shuttleDetails = await prisma.$queryRaw`
+				SELECT * 
+				FROM "Shuttle" 
+				WHERE "Shuttle_id" = ${Shuttle_id}`;
+
+					shuttleDetails[0].PickupTime = stopage1Data.Time;
+					shuttleDetails[0].DropTime = stopage2Data.Time;
+
+					return shuttleDetails[0];
+				}
+			}
+			return null;
+		})
+	);
+
+	// Filter out null values
+	const filteredFinalData = finalData.filter((shuttle) => shuttle !== null);
+	console.log(filteredFinalData);
 }
 
 //
