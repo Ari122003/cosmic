@@ -8,7 +8,6 @@ import StoreProvider from "@/Redux/StoreProvider";
 import { AuthProvider, useToken } from "@/Context/Auth";
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 import { usePathname } from "next/navigation";
-import { PrimeReactProvider } from "primereact/api";
 import NextTopLoader from "nextjs-toploader";
 import { ApolloClientsProvider } from "@/Context/Apollo";
 
@@ -49,8 +48,8 @@ export default function RootLayout({ children }) {
 							<CookieProvider>
 								<SignupProvider>
 									<AuthProvider>
-										<NextTopLoader color="#8585f8" speed={200} />
-										{!showNav && <Navbar />}
+										<NextTopLoader color="#131621" speed={200} />
+										{!showNav && <Navbar/>}
 										{children}
 									</AuthProvider>
 								</SignupProvider>

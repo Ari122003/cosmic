@@ -4,10 +4,11 @@
 
 html,
 body {
-	background-color: #131621; 
+	background-color: #131621;
 }
 
 .text {
+	color: #a479f8;
 }
 
 .blue {
@@ -20,11 +21,11 @@ body {
 
 .but {
 	color: white;
-	background-color: #383896;
+	background-color: #131621;
 }
 
 .but:hover {
-	background-color: #6969e8;
+	background-color: #2c2d31;
 }
 
 .revbut {
