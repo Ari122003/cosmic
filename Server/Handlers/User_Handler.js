@@ -15,9 +15,9 @@ export async function addNewUser(name, email, uid, image) {
 			});
 			await newuser.save();
 		}
-		return "Saved";
+		return "Successfully Registered";
 	} catch (error) {
-		return new Error("Database error");
+		throw new Error("Database error");
 	}
 }
 
@@ -27,6 +27,6 @@ export async function getAUser(uid) {
 
 		return user;
 	} catch (err) {
-		return new Error("Database error");
+		throw new Error("Database error");
 	}
 }

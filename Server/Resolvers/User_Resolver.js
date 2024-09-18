@@ -9,11 +9,17 @@ const userResolver = {
 
 				const res = await addNewUser(name, email, uid, image);
 
-				return res;
+				return {
+					success: true,
+					message: res,
+				};
 			} catch (error) {
 				console.log(error);
 
-				return "Internal server error";
+				return {
+					sucess: false,
+					message: "Internal server error : " + error.message,
+				};
 			}
 		},
 	},
@@ -23,9 +29,20 @@ const userResolver = {
 			try {
 				const user = await getAUser(arg.uid);
 
-				return user;
+				console.log(user);
+				
+
+				return {
+					success: true,
+					message: "Successfully fetched user",
+					user: user,
+				};
 			} catch (error) {
-				return "Internal server error";
+				return {
+					sucess: false,
+					message: "Internal server error : " + error.message,
+					user: null,
+				};
 			}
 		},
 	},

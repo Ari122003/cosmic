@@ -16,7 +16,7 @@ import {
 	Pencil,
 } from "lucide-react";
 
-export default function UserAccount() {
+export default function UserAccount({ data, logOut }) {
 	const [name, setName] = useState("John Doe");
 	const [image, setImage] = useState("/placeholder.svg?height=128&width=128");
 	const [isModalOpen, setIsModalOpen] = useState(false);
@@ -138,7 +138,7 @@ export default function UserAccount() {
 							<div className="relative mb-4 md:mb-0">
 								<div className="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
 									<img
-										src={image}
+										src={data && data.Image}
 										alt="Profile"
 										className="w-full h-full object-cover"
 										onError={handleImageError}
@@ -159,7 +159,7 @@ export default function UserAccount() {
 							</div>
 							<div className="text-center md:text-left">
 								<Label className="text-sm font-medium text-gray-700">
-									Name
+									{data && data.Name}
 								</Label>
 								<div className="flex items-center mt-1 justify-center md:justify-start">
 									<p className="font-medium">{name}</p>
@@ -175,13 +175,16 @@ export default function UserAccount() {
 								<Label className="text-sm font-medium text-gray-700">
 									Email
 								</Label>
-								<p className="mt-1">john.doe@example.com</p>
+								<p className="mt-1"> {data && data.Email}</p>
 							</div>
 							<div>
 								<Label className="text-sm font-medium text-gray-700">
 									Phone Number
 								</Label>
-								<p className="mt-1">+1 (555) 123-4567</p>
+								<p className="mt-1">
+									{" "}
+									{data && data.Phone ? data.Phone : "Add phone number"}
+								</p>
 							</div>
 						</div>
 					</div>

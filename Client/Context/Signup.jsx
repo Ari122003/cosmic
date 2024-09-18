@@ -3,6 +3,7 @@ import {
 	getAuth,
 	createUserWithEmailAndPassword,
 	signInWithEmailAndPassword,
+	signOut,
 } from "firebase/auth";
 import app from "@/Firebase";
 import { gql, useMutation } from "@apollo/client";
@@ -36,10 +37,18 @@ const query = gql`
 	}
 `;
 
+const logoutQuery = gql`
+	mutation LogOut {
+		logout
+	}
+`;
+
 export const SignupProvider = ({ children }) => {
 	const { client1 } = useApolloClients();
 	const { setToken } = useCookie();
 	const [addDriver] = useMutation(query, { client: client1 });
+	const [logout] = useMutation(logoutQuery, { client: client1 });
+
 	const router = useRouter();
 
 	// Signup
@@ -88,8 +97,32 @@ export const SignupProvider = ({ children }) => {
 			});
 	}
 
+	// Log out
+
+	async function LogOut() {
+		try {
+			await signOut(auth);
+
+			const res = await logout();
+
+			if (!res.data) {
+				throw new Error("Bad request");
+			}
+
+			if (!res.data.logout.success) {
+				throw new Error(res.data.logout.message);
+			}
+
+			console.log(res.data.logout.message);
+			return res.data.logout.message;
+		} catch (err) {
+			console.error(err.message);
+			throw new Error(err.message);
+		}
+	}
+
 	return (
-		<signupContext.Provider value={{ googleSignup, googleLogin }}>
+		<signupContext.Provider value={{ googleSignup, googleLogin, LogOut }}>
 			{children}
 		</signupContext.Provider>
 	);

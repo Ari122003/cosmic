@@ -17,17 +17,27 @@ const cookieResolver = {
 		},
 
 		logout: async (parent, args, { req, res }) => {
-			const tokenCookie = cookie.serialize("Token", null, {
-				maxAge: 0,
-				httpOnly: true,
-				secure: true,
-				sameSite: "strict",
-				path: "/",
-			});
+			try {
+				const tokenCookie = cookie.serialize("Token", null, {
+					maxAge: 0,
+					httpOnly: true,
+					secure: true,
+					sameSite: "strict",
+					path: "/",
+				});
 
-			res.setHeader("Set-Cookie", [tokenCookie]);
+				res.setHeader("Set-Cookie", [tokenCookie]);
 
-			return "Logged out";
+				return {
+					success: true,
+					message: "Logged out",
+				};
+			} catch (error) {
+				return {
+					success: false,
+					message: error.message,
+				};
+			}
 		},
 	},
 };

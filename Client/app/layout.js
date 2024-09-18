@@ -15,6 +15,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 import { CookieProvider } from "@/Context/Cookie";
 import { SignupProvider } from "@/Context/Signup";
+import FetchProvider from "@/Context/Fetch";
 
 export default function RootLayout({ children }) {
 	const noNav = [
@@ -28,13 +29,15 @@ export default function RootLayout({ children }) {
 
 	const showNav = noNav.includes(path);
 
+	const url = process.env.NEXT_PUBLIC_URL;
+
 	const clien1 = new ApolloClient({
-		uri: "http://localhost:8000/graphql",
+		uri: `${url}/graphql`,
 		credentials: "include",
 		cache: new InMemoryCache(),
 	});
 	const clien2 = new ApolloClient({
-		uri: "http://localhost:7000/Shuttle_endpoint",
+		uri: `http://localhost:7000/Shuttle_endpoint`,
 		credentials: "include",
 		cache: new InMemoryCache(),
 	});
@@ -48,9 +51,11 @@ export default function RootLayout({ children }) {
 							<CookieProvider>
 								<SignupProvider>
 									<AuthProvider>
-										<NextTopLoader color="#131621" speed={200} />
-										{!showNav && <Navbar/>}
-										{children}
+										<FetchProvider>
+											<NextTopLoader color="#131621" speed={200} />
+											{!showNav && <Navbar />}
+											{children}
+										</FetchProvider>
 									</AuthProvider>
 								</SignupProvider>
 							</CookieProvider>

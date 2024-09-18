@@ -19,6 +19,8 @@ export default function Navbar() {
 	const router = useRouter();
 	const { user } = useAuth();
 
+	
+
 	const login = () => {
 		router.push("/Signin");
 	};
