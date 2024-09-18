@@ -28,7 +28,7 @@ app.use(cookieParser());
 app.use(verifyToken);
 
 const port = 8000;
-const url = process.env.URL;
+const url = process.env.URI;
 
 async function connectDB() {
 	const client = new MongoClient(url);
