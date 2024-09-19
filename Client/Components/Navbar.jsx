@@ -6,6 +6,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/Context/Auth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "./ui/button";
 
 export default function Navbar() {
 	const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -22,7 +23,7 @@ export default function Navbar() {
 	
 
 	const login = () => {
-		router.push("/Signin");
+		router.push("/Signin/User");
 	};
 
 	const handleLinkClick = (link) => {
@@ -108,11 +109,12 @@ export default function Navbar() {
 							</Avatar>
 						</div>
 					) : (
-						<button
+						<Button
 							onClick={login}
-							className=" but px-4 py-2 rounded-md flex items-center">
+							variant="outline"
+							className=" but px-4 py-4 rounded-md flex items-center">
 							Login
-						</button>
+						</Button>
 					)}
 				</div>
 			</div>

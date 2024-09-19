@@ -28,11 +28,12 @@ export default function user() {
 		}
 	};
 
-	function logOut() {
+	async function logOut() {
 		try {
-			LogOut();
+			const res = await LogOut();
+			console.log(res);
+
 			router.push("/");
-			window.location.reload();
 		} catch (error) {
 			console.log(error.message);
 		}

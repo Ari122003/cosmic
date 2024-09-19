@@ -6,13 +6,22 @@ const userType = gql`
 	}
 	type Mutation {
 		adduser(
-			name: String!
-			uid: String!
-			email: String!
-			image: String!
+			name: String
+			uid: String
+			email: String
+			image: String
 		): addUserResponse
-		logout: String
+
+
+		logout: LogoutResponse
+
+
 		setCookie(token: String!): String
+	}
+
+	type LogoutResponse {
+		success: Boolean!
+		message: String!
 	}
 
 	type UserResponse {

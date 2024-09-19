@@ -17,11 +17,9 @@ import {
 } from "lucide-react";
 
 export default function UserAccount({ data, logOut }) {
-	const [name, setName] = useState("John Doe");
-	const [image, setImage] = useState("/placeholder.svg?height=128&width=128");
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-	const [tempName, setTempName] = useState(name);
+	const [tempName, setTempName] = useState(data && data.Name);
 	const modalRef = useRef(null);
 
 	const handleImageUpload = (event) => {
@@ -29,7 +27,7 @@ export default function UserAccount({ data, logOut }) {
 		if (file) {
 			const reader = new FileReader();
 			reader.onload = (e) => {
-				setImage(e.target?.result);
+				console.log(e.target?.result);
 			};
 			reader.readAsDataURL(file);
 		}
@@ -40,7 +38,6 @@ export default function UserAccount({ data, logOut }) {
 	};
 
 	const openModal = () => {
-		setTempName(name);
 		setIsModalOpen(true);
 	};
 
@@ -49,12 +46,17 @@ export default function UserAccount({ data, logOut }) {
 	};
 
 	const handleNameChange = () => {
-		setName(tempName);
+		console.log(tempName);
+
 		closeModal();
 	};
 
 	const toggleMobileMenu = () => {
 		setIsMobileMenuOpen(!isMobileMenuOpen);
+	};
+
+	const signOut = async () => {
+		logOut();
 	};
 
 	useEffect(() => {
@@ -98,7 +100,7 @@ export default function UserAccount({ data, logOut }) {
 			{/* Sidebar */}
 			<aside
 				className={`
-        fixed top-0 md:top-16  bg-white md:bg-transparent left-0 bottom-0 z-30 w-64  shadow-md transition-transform duration-300 ease-in-out transform
+        fixed top-0 md:top-16 shadow-sm shadow-white bg-white md:bg-transparent left-0 bottom-0 z-30 w-64   transition-transform duration-300 ease-in-out transform
         ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}
         md:translate-x-0
       `}>
@@ -119,6 +121,7 @@ export default function UserAccount({ data, logOut }) {
 						<Separator />
 						<Button
 							variant="ghost"
+							onClick={signOut}
 							className="w-full font-bold justify-start text-red-500 hover:text-red-600">
 							<LogOut className="mr-2 h-4 w-4" />
 							Logout
@@ -128,12 +131,12 @@ export default function UserAccount({ data, logOut }) {
 			</aside>
 
 			{/* Content Area */}
-			<main className="md:ml-72 md:mr-40 pt-16 md:pt-0">
+			<main className="md:ml-72 text-white md:mr-40 pt-16 md:pt-0">
 				<div className="p-4 md:p-10">
 					<h1 className="text-2xl md:text-3xl text font-bold mb-6">
 						User Account
 					</h1>
-					<div className="bg-white p-4 md:p-6 rounded-lg shadow-md">
+					<div className=" p-4 md:p-6 rounded-lg shadow-sm shadow-white">
 						<div className="flex flex-col md:flex-row items-center md:space-x-6 mb-6">
 							<div className="relative mb-4 md:mb-0">
 								<div className="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
@@ -158,11 +161,11 @@ export default function UserAccount({ data, logOut }) {
 								</Label>
 							</div>
 							<div className="text-center md:text-left">
-								<Label className="text-sm font-medium text-gray-700">
-									{data && data.Name}
+								<Label className="text-sm font-medium text-gray-400">
+									User Name
 								</Label>
 								<div className="flex items-center mt-1 justify-center md:justify-start">
-									<p className="font-medium">{name}</p>
+									<p className="font-medium">{data && data.Name}</p>
 
 									<div className="ml-3" onClick={openModal}>
 										<Pencil />
@@ -172,13 +175,13 @@ export default function UserAccount({ data, logOut }) {
 						</div>
 						<div className="space-y-4">
 							<div>
-								<Label className="text-sm font-medium text-gray-700">
+								<Label className="text-sm font-medium text-gray-400">
 									Email
 								</Label>
 								<p className="mt-1"> {data && data.Email}</p>
 							</div>
 							<div>
-								<Label className="text-sm font-medium text-gray-700">
+								<Label className="text-sm font-medium text-gray-400">
 									Phone Number
 								</Label>
 								<p className="mt-1">

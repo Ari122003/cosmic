@@ -29,7 +29,6 @@ const userResolver = {
 			try {
 				const user = await getAUser(arg.uid);
 
-				console.log(user);
 				
 
 				return {

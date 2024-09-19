@@ -16,7 +16,6 @@ const driverType = gql`
 			key: String!
 		): String!
 
-		logout: String
 	}
 
 	type Driver {

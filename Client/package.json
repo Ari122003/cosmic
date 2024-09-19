@@ -11,6 +11,7 @@
   "dependencies": {
     "@apollo/client": "^3.10.8",
     "@radix-ui/react-avatar": "^1.1.0",
+    "@radix-ui/react-dialog": "^1.1.1",
     "@radix-ui/react-icons": "^1.3.0",
     "@radix-ui/react-label": "^2.1.0",
     "@radix-ui/react-separator": "^1.1.0",
@@ -25,6 +26,7 @@
     "framer-motion": "^11.3.30",
     "google-map-react": "^2.2.1",
     "graphql": "^16.9.0",
+    "input-otp": "^1.2.4",
     "lucide-react": "^0.441.0",
     "next": "14.2.4",
     "nextjs-toploader": "^1.6.12",
