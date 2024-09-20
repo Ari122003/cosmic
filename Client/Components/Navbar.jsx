@@ -105,7 +105,7 @@ export default function Navbar() {
 							}}>
 							<Avatar>
 								<AvatarImage src={user.reloadUserInfo.photoUrl} />
-								<AvatarFallback>CN</AvatarFallback>
+								<AvatarFallback><img src="/dummy.webp" alt="" /></AvatarFallback>
 							</Avatar>
 						</div>
 					) : (

@@ -34,7 +34,7 @@ export default function UserAccount({ data, logOut }) {
 	};
 
 	const handleImageError = (event) => {
-		event.currentTarget.src = "/cab.avif";
+		event.currentTarget.src = "/dummy.webp";
 	};
 
 	const openModal = () => {
