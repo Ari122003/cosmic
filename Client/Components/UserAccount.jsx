@@ -100,7 +100,7 @@ export default function UserAccount({ data, logOut }) {
 			{/* Sidebar */}
 			<aside
 				className={`
-        fixed top-0 md:top-16 shadow-sm shadow-white bg-white md:bg-transparent left-0 bottom-0 z-30 w-64   transition-transform duration-300 ease-in-out transform
+        fixed top-0 md:top-16  bg-white md:bg-transparent left-0 bottom-0 z-30 w-64  transition-transform duration-300 ease-in-out transform
         ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}
         md:translate-x-0
       `}>
