@@ -5,28 +5,27 @@ import mongoose from "mongoose";
 import cors from "cors";
 import { mergeTypeDefs } from "@graphql-tools/merge";
 import { mergeResolvers } from "@graphql-tools/merge";
-import usertypedef from "./Typedefs/usertypedef.js";
-import userResolver from "./Resolvers/User_Resolver.js";
-import { ApolloServer } from "@apollo/server";
+import driverType from "./Schemas/drivertypedef.js";
+import driverResolver from "./Resolvers/Driver.resolver.js";
 import { expressMiddleware } from "@apollo/server/express4";
-import verifyToken from "./Middlewares/Verify.js";
-import cookieParser from "cookie-parser";
-import cookieResolver from "./Handlers/Set_Cookie.js";
-
-dotenv.config();
+import { ApolloServer } from "@apollo/server";
+import verifyToken from "./Middleware/Verify.js";
 
 const app = express();
-app.use(express.json());
+dotenv.config();
+
 const options = {
-	origin: "http://localhost:3000",
+	origin: "http://localhost:4000",
 	credentials: true,
 };
 app.use(cors(options));
-app.use(cookieParser());
+
+app.use(express.json());
+
 app.use(verifyToken);
 
-const port = 8000;
 const url = process.env.URI;
+const PORT = process.env.PORT || 9000;
 
 async function connectDB() {
 	const client = new MongoClient(url);
@@ -42,8 +41,9 @@ connectDB()
 		console.log("Database connection failed");
 	});
 
-const typeDefs = mergeTypeDefs([usertypedef]);
-const resolvers = mergeResolvers([userResolver, cookieResolver]);
+const typeDefs = mergeTypeDefs([driverType]);
+
+const resolvers = mergeResolvers([driverResolver]);
 
 const server = new ApolloServer({
 	typeDefs,
@@ -51,7 +51,6 @@ const server = new ApolloServer({
 });
 
 await server.start();
-
 app.use(
 	"/graphql",
 	expressMiddleware(server, {
@@ -60,9 +59,7 @@ app.use(
 );
 
 app.get("/", (req, res) => {
-	res.send("Hello World!");
+	res.send("Hello, World!");
 });
 
-app.listen(port, () => {
-	console.log(`App listening on port ${port}`);
-});
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

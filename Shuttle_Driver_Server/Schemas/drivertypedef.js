@@ -2,8 +2,7 @@ import { gql } from "apollo-server";
 
 const driverType = gql`
 	type Query {
-		getShuttleDriver(uid: ID!): Shuttle_Driver
-		getCabDriver(uid: ID!): Cab_Driver
+		getShuttleDriver(uid: ID!): getShuttleDriverResponse!
 	}
 	type Mutation {
 		addDriver(
@@ -13,16 +12,19 @@ const driverType = gql`
 			dob: String!
 			phone: String!
 			car: String!
-			key: String!
-		): String!
-
+			route: String!
+			token: String!
+		): addDriverResponse!
 	}
 
-	type Driver {
-		Name: String
-		Email: String
-		Phone: Int
-		Car_No: String
+	type addDriverResponse {
+		success: Boolean!
+		message: String!
+	}
+	type getShuttleDriverResponse {
+		success: Boolean!
+		message: String!
+		shuttleDriver: [Shuttle_Driver!]!
 	}
 
 	type Shuttle_Driver {
@@ -32,18 +34,7 @@ const driverType = gql`
 		UID: ID!
 		Shuttle_No: String
 		Car_No: String
-	}
-
-	type Cab_Driver {
-		Name: String
-
-		Email: String
-
-		Phone: String
-
-		Car_No: String
-
-		UID: ID!
+		Route: String
 	}
 `;
 

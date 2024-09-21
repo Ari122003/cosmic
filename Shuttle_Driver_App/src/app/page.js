@@ -1,7 +1,6 @@
-import Image from "next/image";
+import { DriverDashboard } from "@/components/driver-dashboard";
+import React from "react";
 
-export default function Home() {
-  return (
-    <></>
-  );
+export default function page() {
+	return <DriverDashboard />;
 }
