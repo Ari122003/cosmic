@@ -10,9 +10,11 @@ import { ApolloServer } from "@apollo/server";
 import { expressMiddleware } from "@apollo/server/express4";
 
 import shuttle_type from "./Typedefs/Routes.typedef.js";
+import bookingType from "./Typedefs/Book.typedef.js";
 import Shuttle_resolver from "./Resolvers/Routes.resolver.js";
 import shuttleData_type from "./Typedefs/Shuttle.typedef.js";
 import shuttle_Data_Resolver from "./Resolvers/Shuttles.resolver.js";
+import bookingResolver from "./Resolvers/Booking.resolver.js";
 
 import verifyToken from "./Middlewares/Verify.js";
 
@@ -24,10 +26,9 @@ const options = {
 };
 app.use(cors(options));
 
-app.use(verifyToken);
+// app.use(verifyToken);
 
 const url = process.env.MONGO_URL;
-
 
 async function connectDB() {
 	const client = new MongoClient(url);
@@ -43,8 +44,12 @@ connectDB()
 		console.log("Database connection failed");
 	});
 
-const typeDefs = mergeTypeDefs([shuttle_type, shuttleData_type]);
-const resolvers = mergeResolvers([Shuttle_resolver, shuttle_Data_Resolver]);
+const typeDefs = mergeTypeDefs([shuttle_type, shuttleData_type, bookingType]);
+const resolvers = mergeResolvers([
+	Shuttle_resolver,
+	shuttle_Data_Resolver,
+	bookingResolver,
+]);
 
 const server = new ApolloServer({
 	typeDefs,
@@ -67,3 +72,5 @@ app.get("/", (req, res) => {
 app.listen(port, () => {
 	console.log(`SEREVER RUNNING ON PORT ${port}`);
 });
+
+

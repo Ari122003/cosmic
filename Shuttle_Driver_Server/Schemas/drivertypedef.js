@@ -13,7 +13,6 @@ const driverType = gql`
 			phone: String!
 			car: String!
 			route: String!
-			token: String!
 		): addDriverResponse!
 	}
 
@@ -34,7 +33,7 @@ const driverType = gql`
 		UID: ID!
 		Shuttle_No: String
 		Car_No: String
-		Route: String
+		Shuttle_Id: String
 	}
 `;
 

@@ -5,7 +5,7 @@ const shuttleData_type = gql`
 		getShuttleData(Start: String!, Dest: String!, Time: String!): [Shuttles]
 	}
 
-	type Shuttles {
+	type Shuttles{
 		Seat: Int
 		Shuttle_id: String
 		Starting: String

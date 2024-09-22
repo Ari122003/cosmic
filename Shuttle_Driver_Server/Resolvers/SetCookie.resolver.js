@@ -1,22 +1,22 @@
-import saveUser from "../Handlers/Save_user.js";
 import cookie from "cookie";
 
-const driverResolver = {
+const setCookieResolver = {
 	Mutation: {
-		addDriver: async (_, args, { req, res }) => {
+		setCookie: async (_, arg, { req, res }) => {
 			try {
-				const response = await saveUser(args);
-
 				const authHeader = req.headers.authorization;
 
 				const token =
 					(authHeader && authHeader.split(" ")[1]) || req.cookies?.Token;
 
+                console.log(token);
+                                        
+
 				const tokenCookie = cookie.serialize("Token", token, {
 					maxAge: 10 * 365 * 24 * 60 * 60,
 					httpOnly: true,
-					secure: true,
-					sameSite: "strict",
+                    secure: false,
+					sameSite: "lax",
 					path: "/",
 				});
 
@@ -24,7 +24,7 @@ const driverResolver = {
 
 				return {
 					success: true,
-					message: response,
+					message: "Cookie updated",
 				};
 			} catch (error) {
 				return {
@@ -36,4 +36,4 @@ const driverResolver = {
 	},
 };
 
-export default driverResolver;
+export default setCookieResolver;

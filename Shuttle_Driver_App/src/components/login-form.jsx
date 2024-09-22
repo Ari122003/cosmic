@@ -6,15 +6,17 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 
-export default function LoginForm() {
+export default function LoginForm({ signIn }) {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [showPassword, setShowPassword] = useState(false);
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		// Here you would typically handle the login logic
-		console.log("Login attempted with:", { email, password });
+		const formData = new FormData(e.target);
+		const data = Object.fromEntries(formData.entries());
+
+		signIn(data);
 	};
 
 	const togglePasswordVisibility = () => {
@@ -35,6 +37,7 @@ export default function LoginForm() {
 						<Input
 							id="email"
 							type="email"
+							name="email"
 							placeholder="john@example.com"
 							required
 							className="bg-[#252837] border-[#3a3f55] text-white placeholder-gray-400"
@@ -52,6 +55,7 @@ export default function LoginForm() {
 								id="password"
 								type={showPassword ? "text" : "password"}
 								required
+								name="password"
 								className="bg-[#252837] border-[#3a3f55] text-white pr-10"
 								value={password}
 								onChange={(e) => setPassword(e.target.value)}

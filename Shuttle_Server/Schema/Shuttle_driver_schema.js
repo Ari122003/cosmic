@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 const { Schema } = mongoose;
 
-const ShuttleDriverSchema = new Schema(
+const shuttleDriverSchema = new Schema(
 	{
 		UID: {
 			type: String,
@@ -38,19 +38,16 @@ const ShuttleDriverSchema = new Schema(
 		},
 		Shuttle_ID: {
 			type: String,
+			unique: true,
 			uppercase: true,
 		},
-		Route: {
-			type: String,
-			required: true,
-			trim: true,
-		},
+		
 	},
 	{ timestamps: true }
 );
 
-ShuttleDriverSchema.index({ email: 1 });
-ShuttleDriverSchema.index({ Shuttle_ID: 1 });
-ShuttleDriverSchema.index({ uid: 1 });
+shuttleDriverSchema.index({ email: 1 });
+shuttleDriverSchema.index({ shuttle_no: 1 });
+shuttleDriverSchema.index({ uid: 1 });
 
-export default mongoose.model("ShuttleDrivers", ShuttleDriverSchema);
+export default mongoose.model("ShuttleDriver", shuttleDriverSchema);

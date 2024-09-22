@@ -19,7 +19,7 @@ import {
 	PopoverTrigger,
 } from "@/components/ui/popover";
 
-export function SignupForm() {
+export function SignupForm({ signUp }) {
 	const [date, setDate] = useState();
 	const [password, setPassword] = useState("");
 	const [confirmPassword, setConfirmPassword] = useState("");
@@ -27,6 +27,7 @@ export function SignupForm() {
 	const [showPassword, setShowPassword] = useState(false);
 	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 	const [phoneCode, setPhoneCode] = useState(""); // State for phone code
+
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
@@ -40,7 +41,11 @@ export function SignupForm() {
 
 			data.phone = phoneCode + "-" + data.phone;
 			data.dob = date ? format(date, "dd-MM-yyyy") : null;
-			console.log(data);
+			delete data.confirmpassword
+
+			
+
+			signUp(data);
 		}
 	};
 
@@ -148,6 +153,17 @@ export function SignupForm() {
 							id="car-number"
 							name="car" // Add name attribute
 							placeholder="ABC-1234"
+							required
+							className="bg-[#252837] border-[#3a3f55] text-white placeholder-gray-400"
+						/>
+					</div>
+					<div className="space-y-2">
+						<Label htmlFor="route" className="text-[#a479f8]">
+							Provided Route Code
+						</Label>
+						<Input
+							id="route"
+							name="route" // Add name attribute
 							required
 							className="bg-[#252837] border-[#3a3f55] text-white placeholder-gray-400"
 						/>
