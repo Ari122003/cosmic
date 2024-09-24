@@ -14,29 +14,20 @@ const auth = getAuth(app);
 
 const verifyToken = async (req, res, next) => {
 	try {
-		let token;
+		const authHeader = req.headers.authorization;
 
-		if (Object.keys(req.body.variables).includes("token")) {
-			token = req.body.variables.token;
-		} else {
-			token = req.cookies.Token;
-		}
+		const token =
+			(authHeader && authHeader.split(" ")[1]) || req.cookies?.Token;
 
 		if (!token) {
-			res.status(403).json({ msg: "Token unavialable" });
-			return;
+			return res.status(403).json({ msg: "Unauthorized" });
 		}
 
-		try {
-			const user = await auth.verifyIdToken(token);
+		const user = await auth.verifyIdToken(token);
 
-			next();
-		} catch (error) {
-
-			res.status(401).json({ msg: "Unauthorized", error: error });
-		}
+		next();
 	} catch (error) {
-		res.status(401).json({ msg: "Unauthorized", error: error });
+		return res.status(401).json({ msg: "Unauthorized" });
 	}
 };
 

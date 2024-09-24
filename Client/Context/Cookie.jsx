@@ -5,8 +5,8 @@ import { gql, useMutation } from "@apollo/client";
 const cookieContext = createContext(null);
 
 const query = gql`
-	mutation sendCookie($token: String!) {
-		setCookie(token: $token)
+	mutation sendCookie {
+		setCookie
 	}
 `;
 
@@ -14,16 +14,16 @@ export const CookieProvider = ({ children }) => {
 	const { client1 } = useApolloClients();
 	const [setCookie] = useMutation(query, { client: client1 });
 	const setToken = async (token) => {
+		sessionStorage.setItem("token", token);
 
-		const res = await setCookie({
-			variables: {
-				token,
-			},
-		});
-		
+		try {
+			const res = await setCookie();
+			sessionStorage.setItem("token", token);
+		} catch (error) {
+			sessionStorage.setItem("token", token);
 
-		
-		console.log(res);
+			throw new Error(error.graphQLErrors[0].message);
+		}
 	};
 
 	return (

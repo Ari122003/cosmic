@@ -7,108 +7,62 @@ const auth = async (token) => {
 		return cache.get(token);
 	}
 
-	return new Promise((resolve, reject) => {
-		fetch("http://localhost:3000/api/Verify", {
+	try {
+		const res = await fetch("http://localhost:3000/api/Verify", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
-				token: token,
+				Authorization: `Bearer ${token}`,
 			},
-		})
-			.then((res) => {
-				return res.json();
-			})
-			.then((res) => {
-				cache.set(token, res);
-				resolve(res);
-			})
-			.catch((err) => {
-				reject(err);
-			});
-	});
+		});
+
+		const status = res.status;
+
+		console.log(res.status);
+		if (status === 200) {
+			cache.set(token, true);
+			return true;
+		}
+
+
+		return false;
+	} catch (error) {
+		return false;
+	}
 };
 
 export async function middleware(request) {
 	const path = request.nextUrl.pathname;
 	let user = false;
-	let role = null;
 
 	const tokenCookie = request.cookies.get("Token");
+
 
 	if (tokenCookie) {
 		try {
 			const res = await auth(tokenCookie.value);
 
-			user = res.user;
-			role = res.role;
+			user = res;
 		} catch (error) {
-			console.log(error);
+			console.log(error.message);
 		}
 	}
 
-	if (path == "/") {
-		if (user) {
-			if (role != "Rider")
-				return NextResponse.redirect(new URL(`/${role}_Driver`, request.url));
-		}
-	} else if (path == "/Cab_Driver") {
-		if (user) {
-			if (role == "Rider")
-				return NextResponse.redirect(new URL(`/`, request.url));
-			else if (role == "Shuttle") {
-				return NextResponse.redirect(new URL(`/Shuttle_Driver`, request.url));
-			}
-		} else {
-			return NextResponse.redirect(new URL("/", request.url));
-		}
-	} else if (path == "/Shuttle_Driver") {
-		if (user) {
-			if (role == "Rider")
-				return NextResponse.redirect(new URL(`/`, request.url));
-			else if (role == "Cab") {
-				return NextResponse.redirect(new URL(`/Cab_Driver`, request.url));
-			}
-		} else {
-			return NextResponse.redirect(new URL("/", request.url));
-		}
-	} else if (path == "/Services") {
-		if (user) {
-			if (role != "Rider")
-				return NextResponse.redirect(new URL(`/${role}_Driver`, request.url));
-		} else {
-			return NextResponse.redirect(new URL("/", request.url));
+	if (path == "/Services") {
+		if (!user) {
+			return NextResponse.redirect(new URL(`/Signin/User`, request.url));
 		}
 	} else if (path == "/Signin/User") {
 		if (user) {
-			if (role != "Rider") {
-				return NextResponse.redirect(new URL(`/${role}_Driver`, request.url));
-			} else {
-				return NextResponse.redirect(new URL("/", request.url));
-			}
-		}
-	} else if (path == "/Signin/Shuttle_Driver_login") {
-		if (user) {
-			if (role != "Rider") {
-				return NextResponse.redirect(new URL(`/${role}_Driver`, request.url));
-			} else {
-				return NextResponse.redirect(new URL("/", request.url));
-			}
-		}
-	} else if (path == "/Signin/Shuttle_Driver_Registration") {
-		if (user) {
-			if (role != "Rider") {
-				return NextResponse.redirect(new URL(`/${role}_Driver`, request.url));
-			} else {
-				return NextResponse.redirect(new URL("/", request.url));
-			}
+			return NextResponse.redirect(new URL("/", request.url));
 		}
 	} else if (path == "/Account") {
-		if (user) {
-			if (role != "Rider") {
-				return NextResponse.redirect(new URL(`/${role}_Driver`, request.url));
-			}
-		} else {
+		if (!user) {
 			return NextResponse.redirect(new URL(`/`, request.url));
 		}
 	}
 }
+
+export const config = {
+	matcher: ["/"],
+};

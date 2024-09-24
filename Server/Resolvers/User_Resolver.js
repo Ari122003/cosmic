@@ -1,5 +1,6 @@
 import { addNewUser } from "../Handlers/User_Handler.js";
 import { getAUser } from "../Handlers/User_Handler.js";
+import { GraphQLError } from "graphql";
 
 const userResolver = {
 	Mutation: {
@@ -9,17 +10,9 @@ const userResolver = {
 
 				const res = await addNewUser(name, email, uid, image);
 
-				return {
-					success: true,
-					message: res,
-				};
+				return res;
 			} catch (error) {
-				console.log(error);
-
-				return {
-					sucess: false,
-					message: "Internal server error : " + error.message,
-				};
+				throw new GraphQLError("Internal server error : " + error.message);
 			}
 		},
 	},
@@ -29,19 +22,9 @@ const userResolver = {
 			try {
 				const user = await getAUser(arg.uid);
 
-				
-
-				return {
-					success: true,
-					message: "Successfully fetched user",
-					user: user,
-				};
+				return user;
 			} catch (error) {
-				return {
-					sucess: false,
-					message: "Internal server error : " + error.message,
-					user: null,
-				};
+				throw new GraphQLError("Internal server error : " + error.message);
 			}
 		},
 	},

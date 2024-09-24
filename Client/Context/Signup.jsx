@@ -1,8 +1,6 @@
 import React, { createContext, useContext } from "react";
 import {
 	getAuth,
-	createUserWithEmailAndPassword,
-	signInWithEmailAndPassword,
 	signOut,
 	GoogleAuthProvider,
 	signInWithPopup,
@@ -12,41 +10,14 @@ import { gql, useMutation } from "@apollo/client";
 import { useApolloClients } from "./Apollo";
 import { useCookie } from "./Cookie";
 import { useRouter } from "next/navigation";
-import { getDatabase, ref, set } from "firebase/database";
 
 const auth = getAuth(app);
-const db = getDatabase(app);
 
 const signupContext = createContext(null);
 
-const query = gql`
-	mutation add_new_driver(
-		$uid: String!
-		$name: String!
-		$email: String!
-		$dob: String!
-		$phone: String!
-		$car: String!
-		$key: String!
-	) {
-		addDriver(
-			uid: $uid
-			name: $name
-			email: $email
-			dob: $dob
-			phone: $phone
-			car: $car
-			key: $key
-		)
-	}
-`;
-
 const logoutQuery = gql`
 	mutation LogOut {
-		logout {
-			success
-			message
-		}
+		logout
 	}
 `;
 
@@ -57,79 +28,22 @@ const signinQuery = gql`
 		$email: String!
 		$image: String!
 	) {
-		adduser(name: $name, uid: $uid, email: $email, image: $image) {
-			success
-			message
-		}
+		adduser(name: $name, uid: $uid, email: $email, image: $image)
 	}
 `;
 
 export const SignupProvider = ({ children }) => {
 	const { client1 } = useApolloClients();
 	const { setToken } = useCookie();
-	const [addDriver] = useMutation(query, { client: client1 });
 	const [logout] = useMutation(logoutQuery, { client: client1 });
 	const [adduser] = useMutation(signinQuery, { client: client1 });
 
 	const router = useRouter();
 
-	// Driver Signup
-
-	async function googleSignup(data, key) {
-		const { firstname, lastname, email, dob, phone, password, car } = data;
-
-		await createUserWithEmailAndPassword(auth, email, password)
-			.then(async (res) => {
-				await res.user.getIdToken().then(async (token) => {
-					await setToken(token);
-					const resp = await addDriver({
-						variables: {
-							uid: res.user.uid,
-							name: `${firstname} ${lastname}`,
-							email,
-							dob,
-							phone,
-							car,
-							key,
-						},
-					});
-
-					console.log(resp);
-					router.push(`/${key}_Driver`);
-				});
-			})
-			.catch((err) => {
-				console.log(err);
-			});
-	}
-
-	// Driver Signin
-	async function googleLogin(data, key) {
-		const { email, password } = data;
-
-		signInWithEmailAndPassword(auth, email, password)
-			.then((res) => {
-				res.user.getIdToken().then(async (token) => {
-					await setToken(token);
-					router.push(`/${key}_Driver`);
-				});
-			})
-			.catch((err) => {
-				console.log(err);
-			});
-	}
-
 	// User Signin
 
-	async function loginWithGoogle() {
-		const provider = new GoogleAuthProvider();
-
+	async function gqlSignin(result) {
 		try {
-			const result = await signInWithPopup(auth, provider);
-			const token = await result.user.getIdToken();
-
-			await setToken(token);
-
 			const { email, displayName, photoUrl } = result.user.reloadUserInfo;
 
 			const res = await adduser({
@@ -141,13 +55,29 @@ export const SignupProvider = ({ children }) => {
 				},
 			});
 
-			await set(ref(db, `Roles/${result.user.uid}`), {
-				Role: "Rider",
-			});
+			return res;
+		} catch (error) {
+			throw new Error(error.graphQLErrors[0].message);
+		}
+	}
 
-			if (!res.data.adduser.success) {
-				throw new Error(res.data.adduser.message);
-			}
+	async function loginWithGoogle() {
+		const provider = new GoogleAuthProvider();
+
+		try {
+			let result;
+			await signInWithPopup(auth, provider)
+				.then((res) => {
+					result = res;
+				})
+				.catch((error) => {
+					throw new Error(error.code);
+				});
+			const token = await result.user.getIdToken();
+
+			const res = await gqlSignin(result);
+
+			await setToken(token);
 
 			return {
 				res,
@@ -160,29 +90,35 @@ export const SignupProvider = ({ children }) => {
 
 	// Log out
 
-	async function LogOut() {
+	async function gqlLogout() {
+		try {
+			const res = await logout();
+			return res.data.logout;
+		} catch (error) {
+			throw new Error(error.graphQLErrors[0].message);
+		}
+	}
+
+	async function firebaseLogout() {
 		try {
 			await signOut(auth);
+		} catch (error) {
+			throw new Error(error.code);
+		}
+	}
 
-			const res = await logout();
-
-			if (!res.data) {
-				throw new Error("Bad request");
-			}
-
-			if (!res.data.logout.success) {
-				throw new Error(res.data.logout.message);
-			}
-
-			return res.data.logout.message;
-		} catch (err) {
-			throw new Error(err.message);
+	async function LogOut() {
+		try {
+			await firebaseLogout();
+			const res = await gqlLogout();
+			return res;
+		} catch (error) {
+			throw new Error(error.message);
 		}
 	}
 
 	return (
-		<signupContext.Provider
-			value={{ googleSignup, googleLogin, LogOut, loginWithGoogle }}>
+		<signupContext.Provider value={{ LogOut, loginWithGoogle }}>
 			{children}
 		</signupContext.Provider>
 	);

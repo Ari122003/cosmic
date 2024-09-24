@@ -7,14 +7,10 @@ const fetchContext = createContext(null);
 const query = gql`
 	query getuser($uid: ID!) {
 		getUser(uid: $uid) {
-			success
-			message
-			user {
-				Name
-				Email
-				Phone
-				Image
-			}
+			Name
+			Email
+			Phone
+			Image
 		}
 	}
 `;
@@ -32,15 +28,11 @@ export default function FetchProvider({ children }) {
 				},
 			});
 
-			if (!res.data) {
-				throw new Error("Bad request");
-			} else if (!res.data.getUser.success) {
-				throw new Error(res.data.getUser.message);
-			}
+			console.log(res);
 
-			return res.data.getUser.user;
+			return res.data.getUser;
 		} catch (error) {
-			throw new Error(error.message);
+			throw new Error(error.graphQLErrors[0].message);
 		}
 	}
 

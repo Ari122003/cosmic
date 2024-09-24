@@ -1,19 +1,29 @@
 import cookie from "cookie";
+import { GraphQLError } from "graphql";
 
 const cookieResolver = {
 	Mutation: {
 		setCookie: async (parent, args, { req, res }) => {
-			const tokenCookie = cookie.serialize("Token", args.token, {
-				maxAge: 10 * 365 * 24 * 60 * 60,
-				httpOnly: true,
-				secure: true,
-				sameSite: "strict",
-				path: "/",
-			});
+			try {
+				const authHeader = req.headers.authorization;
 
-			res.setHeader("Set-Cookie", [tokenCookie]);
+				const token =
+					(authHeader && authHeader.split(" ")[1]) || req.cookies?.Token;
 
-			return "Cookie updated";
+				const tokenCookie = cookie.serialize("Token", token, {
+					maxAge: 10 * 365 * 24 * 60 * 60,
+					httpOnly: true,
+					secure: true,
+					sameSite: "strict",
+					path: "/",
+				});
+
+				res.setHeader("Set-Cookie", [tokenCookie]);
+
+				return "Cookie updated";
+			} catch (error) {
+				throw new GraphQLError("Internal server error : " + error.message);
+			}
 		},
 
 		logout: async (parent, args, { req, res }) => {
@@ -28,15 +38,9 @@ const cookieResolver = {
 
 				res.setHeader("Set-Cookie", [tokenCookie]);
 
-				return {
-					success: true,
-					message: "Logged out",
-				};
+				return "You are logged out";
 			} catch (error) {
-				return {
-					success: false,
-					message: error.message,
-				};
+				throw new GraphQLError("Internal server error : " + error.message);
 			}
 		},
 	},

@@ -22,6 +22,7 @@ export default function user() {
 				console.log(res);
 
 				setDet(res);
+				
 			}
 		} catch (error) {
 			console.log(error.message);
