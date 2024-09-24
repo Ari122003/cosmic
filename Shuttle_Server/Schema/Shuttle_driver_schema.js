@@ -36,18 +36,22 @@ const shuttleDriverSchema = new Schema(
 			required: true,
 			uppercase: true,
 		},
+		Route: {
+			type: String,
+			required: true,
+		},
 		Shuttle_ID: {
 			type: String,
 			unique: true,
 			uppercase: true,
 		},
-		
 	},
 	{ timestamps: true }
 );
 
-shuttleDriverSchema.index({ email: 1 });
-shuttleDriverSchema.index({ shuttle_no: 1 });
-shuttleDriverSchema.index({ uid: 1 });
+shuttleDriverSchema.index({ Email: 1 });
+shuttleDriverSchema.index({ Shuttle_ID: 1 });
+shuttleDriverSchema.index({ UID: 1 });
+shuttleDriverSchema.index({ Route: 1 });
 
 export default mongoose.model("ShuttleDriver", shuttleDriverSchema);

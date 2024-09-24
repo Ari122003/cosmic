@@ -30,19 +30,13 @@ const signupQuery = gql`
 			phone: $phone
 			car: $car
 			route: $route
-		) {
-			success
-			message
-		}
+		)
 	}
 `;
 
 const cookieQuery = gql`
 	mutation test {
-		setCookie {
-			success
-			message
-		}
+		setCookie
 	}
 `;
 
@@ -52,30 +46,44 @@ export const AuthProvider = ({ children }) => {
 
 	// Signup
 
+	async function firebaseSignup(auth, email, password) {
+		try {
+			const res = await createUserWithEmailAndPassword(auth, email, password);
+
+			return res;
+		} catch (error) {
+			throw new Error(error.code);
+		}
+	}
+
+	async function graphqlSignup(uid, data) {
+		try {
+			const res = await addDriver({
+				variables: {
+					uid,
+					...data,
+				},
+			});
+
+			return res.data.addDriver;
+		} catch (error) {
+			throw new Error(error.graphQLErrors[0].message);
+		}
+	}
+
 	async function SignUp(data) {
 		try {
 			const { email, password } = data;
 
-			const res = await createUserWithEmailAndPassword(auth, email, password);
+			const res = await firebaseSignup(auth, email, password);
 
 			const token = await res.user.getIdToken();
 
 			sessionStorage.setItem("token", token);
 
-			const resp = await addDriver({
-				variables: {
-					uid: res.user.uid,
-					...data,
-				},
-			});
+			const response = await graphqlSignup(res.user.uid, data);
 
-			if (!resp.data) {
-				throw new Error("Internal Server Error");
-			}
-			if (!resp.data.addDriver.success) {
-				throw new Error(resp.data.addDriver.message);
-			}
-			return resp.data.addDriver.message;
+			return response;
 		} catch (error) {
 			throw new Error(error.message);
 		}
@@ -83,11 +91,21 @@ export const AuthProvider = ({ children }) => {
 
 	// Login
 
+	async function firebaseLogin(auth, email, password) {
+		try {
+			const res = await signInWithEmailAndPassword(auth, email, password);
+
+			return res;
+		} catch (error) {
+			throw new Error(error.code);
+		}
+	}
+
 	async function Login(data) {
 		try {
 			const { email, password } = data;
 
-			const res = await signInWithEmailAndPassword(auth, email, password);
+			const res = await firebaseLogin(auth, email, password);
 
 			const token = await res.user.getIdToken();
 
@@ -105,16 +123,9 @@ export const AuthProvider = ({ children }) => {
 		try {
 			const res = await setCookie();
 
-			console.log(res);
-
-			if (!res.data) {
-				throw new Error("Internal Server Error");
-			}
-			if (!res.data.setCookie) {
-				throw new Error(res.data.setCookie.message);
-			}
+			console.log(res.data.setCookie);
 		} catch (error) {
-			throw new Error(error.message);
+			throw new Error(error.graphQLErrors[0].message);
 		}
 	}
 

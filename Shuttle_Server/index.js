@@ -59,7 +59,7 @@ const server = new ApolloServer({
 const port = 7000;
 await server.start();
 app.use(
-	"/Shuttle_endpoint",
+	"/graphql",
 	expressMiddleware(server, {
 		context: async ({ req, res }) => ({ req, res }),
 	})

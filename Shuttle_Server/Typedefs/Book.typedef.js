@@ -8,12 +8,7 @@ const bookingType = gql`
 			day: String!
 			pick: String!
 			drop: String!
-		): addBookingResponse!
-	}
-
-	type addBookingResponse {
-		success: Boolean!
-		message: String!
+		): String!
 	}
 `;
 

@@ -16,17 +16,16 @@ const auth = getAuth(app);
 const verifyToken = async (req, res, next) => {
 	try {
 		const authHeader = req.headers.authorization;
-		
+
 		const token =
 			(authHeader && authHeader.split(" ")[1]) || req.cookies?.Token;
-
-			
 
 		if (!token) {
 			return res.status(403).json({ msg: "Unauthorized" });
 		}
 
-		// const user = await auth.verifyIdToken(token);
+		const user = await auth.verifyIdToken(token);
+		
 
 		next();
 	} catch (error) {

@@ -5,18 +5,14 @@ import mongoose from "mongoose";
 import cors from "cors";
 import cookieParser from "cookie-parser"; // Import cookie-parser
 
-
 import { mergeTypeDefs } from "@graphql-tools/merge";
 import { mergeResolvers } from "@graphql-tools/merge";
-
 
 import driverType from "./Schemas/drivertypedef.js";
 import setCookieType from "./Schemas/SetCookie.typedef.js";
 
-
 import driverResolver from "./Resolvers/Driver.resolver.js";
 import setCookieResolver from "./Resolvers/SetCookie.resolver.js";
-
 
 import { expressMiddleware } from "@apollo/server/express4";
 import { ApolloServer } from "@apollo/server";
@@ -26,15 +22,15 @@ const app = express();
 dotenv.config();
 
 const options = {
-	origin: "http://localhost:4000",
+	origin: "http://localhost:3000",
 	credentials: true,
 };
 app.use(cors(options));
 
 app.use(express.json());
-app.use(cookieParser()); 
+app.use(cookieParser());
 
-// app.use(verifyToken);
+app.use(verifyToken);
 
 const url = process.env.URI;
 const PORT = process.env.PORT || 9000;
@@ -53,9 +49,9 @@ connectDB()
 		console.log("Database connection failed");
 	});
 
-const typeDefs = mergeTypeDefs([driverType,setCookieType]);
+const typeDefs = mergeTypeDefs([driverType, setCookieType]);
 
-const resolvers = mergeResolvers([driverResolver,setCookieResolver]);
+const resolvers = mergeResolvers([driverResolver, setCookieResolver]);
 
 const server = new ApolloServer({
 	typeDefs,

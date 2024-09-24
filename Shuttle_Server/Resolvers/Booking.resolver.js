@@ -1,21 +1,16 @@
 import { bookShuttle } from "../Handler/Booking_Handler.js";
+import { GraphQLError } from "graphql";
 
 const bookingResolver = {
 	Mutation: {
 		addBooking: async (_, arg, { req, res }) => {
 			try {
-				bookShuttle(arg);
+				const res = await bookShuttle(arg);
 
-                return {
-                    success: true,
-                    message: "Booking Successful",
-                }
+				return res;
 			} catch (error) {
-                return {
-                    success: false,
-                    message: "Booking Failed",
-                }
-            }
+				throw new GraphQLError("Internal server error: " + error.message);
+			}
 		},
 	},
 };

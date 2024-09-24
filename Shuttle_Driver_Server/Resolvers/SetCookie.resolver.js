@@ -1,4 +1,5 @@
 import cookie from "cookie";
+import { GraphQLError } from "graphql";
 
 const setCookieResolver = {
 	Mutation: {
@@ -9,31 +10,24 @@ const setCookieResolver = {
 				const token =
 					(authHeader && authHeader.split(" ")[1]) || req.cookies?.Token;
 
-                console.log(token);
-                                        
-
-				const tokenCookie = cookie.serialize("Token", token, {
-					maxAge: 10 * 365 * 24 * 60 * 60,
+				res.cookie("Token", token, {
+					maxAge: 10 * 365 * 24 * 60 * 60, 
 					httpOnly: true,
-                    secure: false,
-					sameSite: "lax",
-					path: "/",
+					sameSite: "strict",
+					secure: true,
 				});
 
-				res.setHeader("Set-Cookie", [tokenCookie]);
-
-				return {
-					success: true,
-					message: "Cookie updated",
-				};
+				return "Cookie Updated";
 			} catch (error) {
-				return {
-					success: false,
-					message: "Internal Server Error: " + error.message,
-				};
+				throw new GraphQLError("Internal Server Error: " + error, {
+					status: 500,
+				});
 			}
 		},
 	},
+
+
+	
 };
 
 export default setCookieResolver;

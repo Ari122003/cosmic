@@ -1,3 +1,4 @@
+import { GraphQLError } from "graphql";
 import saveUser from "../Handlers/Save_user.js";
 import cookie from "cookie";
 
@@ -22,15 +23,9 @@ const driverResolver = {
 
 				res.setHeader("Set-Cookie", [tokenCookie]);
 
-				return {
-					success: true,
-					message: response,
-				};
+				return response;
 			} catch (error) {
-				return {
-					success: false,
-					message: "Internal Server Error: " + error.message,
-				};
+				throw new GraphQLError("Internal server error: " + error.message);
 			}
 		},
 	},
