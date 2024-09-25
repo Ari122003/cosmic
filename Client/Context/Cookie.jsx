@@ -13,14 +13,15 @@ const query = gql`
 export const CookieProvider = ({ children }) => {
 	const { client1 } = useApolloClients();
 	const [setCookie] = useMutation(query, { client: client1 });
+
 	const setToken = async (token) => {
 		sessionStorage.setItem("token", token);
 
 		try {
 			const res = await setCookie();
-			sessionStorage.setItem("token", token);
+			sessionStorage.removeItem("token");
 		} catch (error) {
-			sessionStorage.setItem("token", token);
+			sessionStorage.removeItem("token");
 
 			throw new Error(error.graphQLErrors[0].message);
 		}

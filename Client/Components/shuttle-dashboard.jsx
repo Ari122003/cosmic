@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeftRight, Search } from "lucide-react";
+import { Badge } from "@/Components/ui/badge";
 
 const mockShuttleRoutes = [
 	{ id: 1, start: "New York", destination: "Boston", travelTime: "4h 30m" },
@@ -84,11 +85,16 @@ export function ShuttleDashboard() {
 			</h2>
 			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
 				{mockShuttleRoutes.map((route) => (
-					<Card key={route.id} className="bg-[#1c2133] border-[#2c3347]">
-						<CardHeader>
-							<CardTitle className="text-[#6583f7] text-lg">
+					<Card
+						key={route.id}
+						className="relative bg-[#1c2133] border-[#2c3347]">
+						<CardHeader className="relative pr-20">
+							<CardTitle className="text-[#6583f7] text-lg break-words">
 								{route.start} to {route.destination}
 							</CardTitle>
+							<div className="absolute top-2 right-2 bg-white text-white text-xs md:text-sm lg:text-base font-semibold  rounded-md">
+								<Badge variant="outline">Badge</Badge>
+							</div>
 						</CardHeader>
 						<CardContent>
 							<p className="text-[#a479f8]">Travel Time: {route.travelTime}</p>

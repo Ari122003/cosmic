@@ -8,6 +8,8 @@ const shuttle_type = gql`
 	type Shuttles {
 		Starting: String!
 		Destination: String!
+		Shuttle_id: String!
+		Start_time: String!
 	}
 `;
 
