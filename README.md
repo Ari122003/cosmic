@@ -1,6 +1,7 @@
 <h1 align="center" id="title">Cosmic</h1>
 
-<p id="description">This project is an online cab and shuttle booking web application designed to provide users with a seamless and efficient way to book rides. The application leverages modern technologies for both the client-side and backend ensuring a responsive and scalable experience.</p>
+<p id="description">This project is an online cab and shuttle booking web application designed to provide users with a seamless and efficient way to book rides. The application leverages modern technologies for both the client-side and backend ensuring a responsive and scalable experience.
+We have built seperate apps for users and drivers , also implemented microservice architecture.</p>
 
 <h2>Project Screenshots:</h2>
 
@@ -51,7 +52,7 @@ Technologies used in the project:
 - Apollo Server
 - Firebase
 - MongoDB
-- PostgreSQL(Future)
-- Prisma(Future)
+- PostgreSQL
+- Prisma
 - Redis(Future)
 - Kafka(Future)
