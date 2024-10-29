@@ -4,11 +4,12 @@
 
 <h2>Project Screenshots:</h2>
 
-<img src="https://github.com/Ari122003/cosmic/blob/master/Docs/Screenshot%202024-08-09%20180206.png" alt="project-screenshot" width="800" height="400/">
+<img src="https://github.com/Ari122003/cosmic/blob/master/Docs/Screenshot%202024-10-30%20000855.png" alt="project-screenshot" width="800" height="400/">
 
-<img src="https://github.com/Ari122003/cosmic/blob/master/Docs/Screenshot%202024-08-09%20180234.png" alt="project-screenshot" width="800" height="400/">
+<img src="https://github.com/Ari122003/cosmic/blob/master/Docs/Screenshot%202024-10-30%20000906.png" alt="project-screenshot" width="800" height="400/">
 
-<img src="https://github.com/Ari122003/cosmic/blob/master/Docs/Screenshot%202024-08-09%20180218.png" alt="project-screenshot" width="800" height="400/">
+<img src="https://github.com/Ari122003/cosmic/blob/master/Docs/Screenshot%202024-10-30%20000938.png" alt="project-screenshot" width="800" height="400/">
+<img src="https://github.com/Ari122003/cosmic/blob/master/Docs/Screenshot%202024-10-30%20001519.png" alt="project-screenshot" width="800" height="400/">
 
 <h2>🧐 Features</h2>
 
