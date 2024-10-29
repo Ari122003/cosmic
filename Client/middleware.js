@@ -24,7 +24,6 @@ const auth = async (token) => {
 			return true;
 		}
 
-
 		return false;
 	} catch (error) {
 		return false;
@@ -36,7 +35,6 @@ export async function middleware(request) {
 	let user = false;
 
 	const tokenCookie = request.cookies.get("Token");
-
 
 	if (tokenCookie) {
 		try {
@@ -64,5 +62,5 @@ export async function middleware(request) {
 }
 
 export const config = {
-	matcher: ["/"],
+	matcher: ["/", "/Services/:path*", "/Accounts", "/Signin/User"],
 };

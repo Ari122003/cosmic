@@ -20,6 +20,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "daisyui": "^4.12.10",
+    "date-fns": "^4.1.0",
     "firebase": "^10.12.2",
     "firebase-admin": "^12.3.0",
     "flowbite-react": "^0.10.1",

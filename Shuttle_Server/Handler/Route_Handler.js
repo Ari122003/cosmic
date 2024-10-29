@@ -12,7 +12,7 @@ export default async function getRoutes(args) {
 				    ) as distance
 				    FROM "Stoppage"
 				    ORDER BY distance
-				    LIMIT 1;
+				    LIMIT 2;
 				  `;
 
 		let data = [];
@@ -24,7 +24,6 @@ export default async function getRoutes(args) {
 			data.push(...routes);
 		}
 
-		
 		return data;
 	} catch (error) {
 		throw new Error(error.message);

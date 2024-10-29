@@ -21,6 +21,8 @@ const verifyToken = async (req, res, next) => {
 			res.status(403).json({ msg: "Token unavialable" });
 		}
 
+		
+
 		try {
 			const user = await auth.verifyIdToken(token);
 

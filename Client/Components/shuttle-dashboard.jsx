@@ -6,20 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeftRight, Search } from "lucide-react";
 import { Badge } from "@/Components/ui/badge";
 
-const mockShuttleRoutes = [
-	{ id: 1, start: "New York", destination: "Boston", travelTime: "4h 30m" },
-	{
-		id: 2,
-		start: "Los Angeles",
-		destination: "San Francisco",
-		travelTime: "6h 15m",
-	},
-	{ id: 3, start: "Chicago", destination: "Detroit", travelTime: "4h 45m" },
-	{ id: 4, start: "Miami", destination: "Orlando", travelTime: "3h 30m" },
-	{ id: 5, start: "Seattle", destination: "Portland", travelTime: "3h 15m" },
-];
-
-export function ShuttleDashboard() {
+export function ShuttleDashboard({ routes, search }) {
 	const [from, setFrom] = useState("");
 	const [to, setTo] = useState("");
 	const [isRotated, setIsRotated] = useState(false);
@@ -29,6 +16,12 @@ export function ShuttleDashboard() {
 		setTo(from);
 		setIsRotated(!isRotated);
 	};
+
+	function searchShuttle(e) {
+		e.preventDefault();
+
+		search(from, to);
+	}
 
 	return (
 		<div className="min-h-screen bg-[#131621] text-[#a479f8] p-4 sm:p-8 md:mx-20">
@@ -75,7 +68,9 @@ export function ShuttleDashboard() {
 					</div>
 				</div>
 				<div className="flex justify-center my-3">
-					<Button className="bg-[#6583f7] text-white hover:bg-[#5470e6] ">
+					<Button
+						className="bg-[#6583f7] text-white hover:bg-[#5470e6] "
+						onClick={searchShuttle}>
 						<Search className="mr-2 h-4 w-4" /> Search
 					</Button>
 				</div>
@@ -84,23 +79,26 @@ export function ShuttleDashboard() {
 				Routes near you
 			</h2>
 			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-				{mockShuttleRoutes.map((route) => (
-					<Card
-						key={route.id}
-						className="relative bg-[#1c2133] border-[#2c3347]">
-						<CardHeader className="relative pr-20">
-							<CardTitle className="text-[#6583f7] text-lg break-words">
-								{route.start} to {route.destination}
-							</CardTitle>
-							<div className="absolute top-2 right-2 bg-white text-white text-xs md:text-sm lg:text-base font-semibold  rounded-md">
-								<Badge variant="outline">Badge</Badge>
-							</div>
-						</CardHeader>
-						<CardContent>
-							<p className="text-[#a479f8]">Travel Time: {route.travelTime}</p>
-						</CardContent>
-					</Card>
-				))}
+				{routes &&
+					routes.map((route) => (
+						<Card
+							key={route.Shuttle_id}
+							className="relative bg-[#1c2133] border-[#2c3347]">
+							<CardHeader className="relative pr-20">
+								<CardTitle className="text-[#6583f7] text-lg break-words">
+									{route.Starting} to {route.Destination}
+								</CardTitle>
+								<div className="absolute top-2 right-2 bg-white text-white text-xs md:text-sm lg:text-base font-semibold  rounded-md">
+									<Badge variant="outline">{route.Shuttle_id}</Badge>
+								</div>
+							</CardHeader>
+							<CardContent>
+								<p className="text-[#a479f8]">
+									Leaves {route.Starting} at {route.Start_time}
+								</p>
+							</CardContent>
+						</Card>
+					))}
 			</div>
 		</div>
 	);

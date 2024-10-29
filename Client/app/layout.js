@@ -41,7 +41,6 @@ export default function RootLayout({ children }) {
 		credentials: "include",
 	});
 
-	console.log(sessionStorage.getItem("token"));
 	
 	const authMiddleware = new ApolloLink((operation, forward) => {
 		const token = sessionStorage.getItem("token");
@@ -59,7 +58,7 @@ export default function RootLayout({ children }) {
 		cache: new InMemoryCache(),
 	});
 	const clien2 = new ApolloClient({
-		uri: `http://localhost:7000/Shuttle_endpoint`,
+		uri: `http://localhost:7000/graphql`,
 		credentials: "include",
 		cache: new InMemoryCache(),
 	});

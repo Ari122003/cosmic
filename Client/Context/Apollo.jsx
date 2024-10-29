@@ -31,7 +31,7 @@ export const ApolloClientsProvider = ({ children }) => {
 	});
 
 	const client2 = new ApolloClient({
-		uri: "http://localhost:7000/Shuttle_endpoint",
+		uri: "http://localhost:7000/graphql",
 		credentials: "include",
 		cache: new InMemoryCache(),
 	});
